@@ -1,0 +1,135 @@
+/* Style for index page */
+
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    overflow: hidden; /* Prevent scrolling for the animation effect */
+}
+
+.entry-animation {
+    position: fixed;
+    top: 50%;
+    left: 10%;
+    transform: translateY(-50%);
+    opacity: 0;
+    animation: fadeIn 1s forwards;
+}
+
+@keyframes fadeIn {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+}
+
+.header {
+    text-align: left;
+    padding: 50px 20px;
+    color:rgb(244, 30, 30);
+}
+
+.logo {
+    font-size: 5em; 
+    margin-bottom: 10px;
+}
+
+.tagline {
+    font-size: 4em;
+    font-weight: bold; 
+    margin-top: 10px;
+    color:black;
+}
+
+.login-signup {
+    text-align: center;
+    margin-top: 50px;
+}
+
+button {
+    background-color: #fff;
+    color: #3498db;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    opacity: 0; 
+    animation: fadeIn 1s forwards;
+}
+
+button:hover {
+    background-color: #ecf0f1;
+    color: #3498db;
+}
+
+
+
+.user-info {
+    background-color: #f2f2f2;
+    padding: 10px;
+    text-align: right;
+}
+
+.user-info a {
+    color: #3498db;
+    text-decoration: none;
+    margin-left: 10px;
+}
+
+.main-content {
+    display: flex;
+    justify-content: space-around;
+    margin: 20px;
+}
+
+.donate-blood,
+.request-blood,
+.news {
+    width: 30%;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.login-signup {
+    text-align: center;
+    margin-top: 50px;
+}
+
+button {
+    background-color: #3498db;
+    color: #fff;
+    font-size: larger;
+    font-weight: bold;
+    padding: 10px 20px;
+    width:250px;
+    height: 70px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #000000;
+}
+
+
+.gradient-background {
+    background: linear-gradient(to right, #3498db, #e74c3c);
+    height: 100vh;
+    overflow: hidden;
+    position: relative;
+}
+
+
+.tagline {
+    font-size: 18px;
+    margin-top: 10px;
+}
+
+.login-signup {
+    position: fixed;
+    top: 50%;
+    right: 10%;
+    transform: translateY(-50%);
+    text-align: center;
+    margin-top: 50px;
+}
