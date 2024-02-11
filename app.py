@@ -15,5 +15,16 @@ app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
 def index():
     return render_template("index.html")
 
+
+#signin page
+@app.route('/get-started')
+def getstarted():
+    return render_template("getstarted.html")
+
+#login page
+@app.route('/login')
+def login():
+    return render_template("login.html")
+
 if __name__ == '__main__':
     app.run(host="0.0.0.0")

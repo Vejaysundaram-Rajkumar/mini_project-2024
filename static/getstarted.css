@@ -1,0 +1,106 @@
+* {
+    box-sizing: border-box;
+    transition: all 0.3s ease; /* Add transition for smooth animations */
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    overflow: hidden; /* Prevent scrolling for the animation effect */
+}
+.gradient-background {
+    background: linear-gradient(to right, #1c81c4, #ed2b15);
+    height: 100vh;
+    overflow: hidden;
+    position: relative;
+}
+
+
+#regForm {
+    background-color: #ffffff;
+    margin: 100px auto;
+    font-family: 'Raleway', sans-serif;
+    padding: 40px;
+    width: 70%;
+    min-width: 300px;
+    border-radius: 10px; 
+    animation: fadeIn 4s forwards, slideIn 2s forwards;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); 
+}
+
+@keyframes fadeIn {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+}
+@keyframes slideIn {
+    0% {
+        left: -100%; 
+    }
+    100% {
+        left: 10%; 
+    }
+}
+h1 {
+    text-align: center;
+}
+
+input {
+    padding: 10px;
+    width: 100%;
+    font-size: 17px;
+    font-family: 'Raleway', sans-serif;
+    border: 1px solid #aaaaaa;
+    border-radius: 5px; /* Soften the edges */
+    margin-bottom: 10px;
+}
+
+/* Mark input boxes that get an error on validation: */
+input.invalid {
+    background-color: #ffdddd;
+}
+
+/* Hide all steps by default: */
+.tab {
+    display: none;
+}
+
+button {
+    background-color: #04AA6D;
+    color: #ffffff;
+    border: none;
+    padding: 10px 20px;
+    font-size: 17px;
+    font-family: 'Raleway', sans-serif;
+    cursor: pointer;
+    border-radius: 5px; /* Soften the edges */
+}
+
+button:hover {
+    opacity: 0.8;
+}
+
+#prevBtn {
+    background-color: #bbbbbb;
+}
+
+/* Make circles that indicate the steps of the form: */
+.step {
+    height: 15px;
+    width: 15px;
+    margin: 0 2px;
+    background-color: #bbbbbb;
+    border: none;
+    border-radius: 50%;
+    display: inline-block;
+    opacity: 0.5;
+}
+
+.step.active {
+    opacity: 1;
+}
+
+/* Mark the steps that are finished and valid: */
+.step.finish {
+    background-color: #04AA6D;
+}

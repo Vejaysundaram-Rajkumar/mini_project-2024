@@ -46,7 +46,7 @@ body {
     color:black;
 }
 
-.login-signup {
+.get-started {
     text-align: center;
     margin-top: 50px;
 }
@@ -57,6 +57,8 @@ button {
     padding: 10px 20px;
     border: none;
     border-radius: 5px;
+    font-size: larger;
+    font-weight: bolder;
     cursor: pointer;
     opacity: 0; 
     animation: fadeIn 1s forwards, slideInButton 1s forwards; 
@@ -105,7 +107,7 @@ button:hover {
     border-radius: 5px;
 }
 
-.login-signup {
+.get-started {
     text-align: center;
     margin-top: 50px;
 }
@@ -133,25 +135,14 @@ button:hover {
     height: 100vh;
     overflow: hidden;
     position: relative;
-    animation: changeColor 10s infinite linear;
 }
-
-@keyframes changeColor {
-    0% {
-        background-position: 0% 50%;
-    }
-    100% {
-        background-position: 100% 50%;
-    }
-}
-
 
 .tagline {
     font-size: 18px;
     margin-top: 10px;
 }
 
-.login-signup {
+.get-started {
     position: fixed;
     top: 50%;
     right: 10%;
@@ -161,7 +152,7 @@ button:hover {
 }
 
 @media screen and (max-width: 1200px) and (min-width: 565px) {
-    .login-signup {
+    .get-started {
         margin-top: 30px;
     }
 
@@ -195,7 +186,7 @@ button:hover {
         font-size: 1em;
     }
 
-    .login-signup {
+    .get-started {
         margin-top: 30px;
     }
 
@@ -212,7 +203,7 @@ button:hover {
         margin-top: 10px;
         position: relative;
         top: 150px;
-        right: inherit;
+        right:inherit;
     }
 
     .donate-blood,

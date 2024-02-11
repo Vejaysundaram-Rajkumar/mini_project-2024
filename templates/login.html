@@ -1,0 +1,48 @@
+<!DOCTYPE html> 
+<html> 
+<head> 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="{{ url_for('static', filename='login.css') }}">
+    <title>BloodLine Login</title> 
+</head> 
+
+<body> 
+    <div class="gradient-background">
+	<div class="main"> 
+		<h1>BloodLine</h1> 
+		<h3>Login</h3> 
+		<form action="/"> 
+			<label for="first"> 
+				Username: 
+			</label> 
+			<input type="text"
+				id="first"
+				name="first"
+				placeholder="Enter your Username" required> 
+
+			<label for="password"> 
+				Password: 
+			</label> 
+			<input type="password"
+				id="password"
+				name="password"
+				placeholder="Enter your Password" required> 
+
+			<div class="wrap"> 
+				<button type="submit"
+						onclick="location.href='/'"> 
+					Submit 
+				</button> 
+			</div> 
+		</form> 
+		<p>Not registered? 
+			<a href="/get-started"
+			style="text-decoration: none;"> 
+				Create an account 
+			</a> 
+		</p> 
+	</div> 
+    
+</body> 
+
+</html>
