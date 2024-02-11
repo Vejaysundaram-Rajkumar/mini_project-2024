@@ -13,18 +13,25 @@ body {
     left: 10%;
     transform: translateY(-50%);
     opacity: 0;
-    animation: fadeIn 1s forwards;
+    animation: fadeIn 4s forwards, slideIn 2s forwards;
 }
 
 @keyframes fadeIn {
     0% { opacity: 0; }
     100% { opacity: 1; }
 }
-
+@keyframes slideIn {
+    0% {
+        left: -100%; 
+    }
+    100% {
+        left: 10%; 
+    }
+}
 .header {
     text-align: left;
     padding: 50px 20px;
-    color:rgb(244, 30, 30);
+    color:rgb(255, 255, 255);
 }
 
 .logo {
@@ -52,7 +59,8 @@ button {
     border-radius: 5px;
     cursor: pointer;
     opacity: 0; 
-    animation: fadeIn 1s forwards;
+    animation: fadeIn 1s forwards, slideInButton 1s forwards; 
+    transition: background-color 0.3s ease;
 }
 
 button:hover {
@@ -60,6 +68,14 @@ button:hover {
     color: #3498db;
 }
 
+@keyframes slideInButton {
+    0% {
+        transform: translateY(50px);
+    }
+    100% {
+        transform: translateY(0);
+    }
+}
 
 
 .user-info {
@@ -113,10 +129,20 @@ button:hover {
 
 
 .gradient-background {
-    background: linear-gradient(to right, #3498db, #e74c3c);
+    background: linear-gradient(to right, #1c81c4, #ed2b15);
     height: 100vh;
     overflow: hidden;
     position: relative;
+    animation: changeColor 10s infinite linear;
+}
+
+@keyframes changeColor {
+    0% {
+        background-position: 0% 50%;
+    }
+    100% {
+        background-position: 100% 50%;
+    }
 }
 
 
@@ -132,4 +158,67 @@ button:hover {
     transform: translateY(-50%);
     text-align: center;
     margin-top: 50px;
+}
+
+@media screen and (max-width: 1200px) and (min-width: 565px) {
+    .login-signup {
+        margin-top: 30px;
+    }
+
+    .main-content {
+        flex-direction: column;
+        align-items: center; 
+    }
+    button {
+        position: relative;
+        top: 150px;
+        left: 5%;
+    }
+    .donate-blood,
+    .request-blood,
+    .news {
+        width: 100%;
+        margin-bottom: 20px;
+    }
+}
+
+@media screen and (max-width: 564px) and (min-width: 100px) {
+    .header {
+        padding: 20px;
+    }
+
+    .logo {
+        font-size: 3em;
+    }
+
+    .tagline {
+        font-size: 1em;
+    }
+
+    .login-signup {
+        margin-top: 30px;
+    }
+
+    .main-content {
+        flex-direction: column;
+        align-items: center; 
+    }
+
+    button {
+        width: 100%;
+        padding: 1em 20px; 
+        font-size: 16px;
+        height: 50%;
+        margin-top: 10px;
+        position: relative;
+        top: 150px;
+        right: inherit;
+    }
+
+    .donate-blood,
+    .request-blood,
+    .news {
+        width: 100%;
+        margin-bottom: 20px;
+    }
 }
