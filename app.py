@@ -42,17 +42,13 @@ def signupsubmit():
             blood_group = request.form.get('bgroup')
             password = request.form.get('pword')
             name=first_name + " " + last_name
-            con=connect_db()
-            cursor=con.cursor()
-            cursor.execute("INSERT INTO userdetails (id,name, email,phone,dd,mm,yyyy,blood_group,password) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",(id,name, email,phone,dd,nn,yyyy,blood_group,password))
-            con.commit()
-            con.close()
+            
 
             return render_template("index.html", current_user=name)
     except:
         title="Signup Error!@#$"
         message="Error updating the database with your details for signup!."
-        return redirect("error.html",error_title=title,error_message=message)
+        return render_template("error.html",error_title=title,error_message=message)
 
 #signin page
 @app.route('/get-started')
