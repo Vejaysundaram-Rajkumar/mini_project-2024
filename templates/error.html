@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='error.css') }}">
+    <title>Error Page</title>
+</head>
+<body>
+    <div class="gradient-background">
+    <div class="error-container">
+        <div class="error-title">Oops! {{error_title}}</div>
+        <div class="error-message">{{error_message}}</div>
+        <a href="/" class="back-to-home">Back</a>
+    </div>
+
+</body>
+</html>

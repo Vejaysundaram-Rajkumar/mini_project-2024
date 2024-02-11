@@ -16,28 +16,11 @@
         </div>
     </div>
 {% if current_user %}
-    <div class="user-info">
-        <p>Welcome, {{ current_user.username }}!</p>
-        <a href="{{ url_for('logout') }}">Logout</a>
-    </div>
-
-    <div class="main-content">
-        <div class="donate-blood">
-            <h2>Donate Blood</h2>
-            <!-- Add form for blood donation here -->
-        </div>
-
-        <div class="request-blood">
-            <h2>Request Blood</h2>
-            <!-- Add form for blood request here -->
-        </div>
-
-        <div class="news">
-            <h2>News</h2>
-            <!-- Display news related to blood donation here -->
-        </div>
-    </div>
-
+<h1 class="welcome">Welcome! {{current_user}}</h1>
+<div class="get-started">
+    <button onclick="location.href='/donate'">Donate Blood</button>
+    <button onclick="location.href='/Request'">Request Blood</button>
+</div>
 {% else %}
     <div class="get-started">
         <button onclick="location.href='/get-started'">Get Started</button>
