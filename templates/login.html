@@ -11,13 +11,13 @@
 	<div class="main"> 
 		<h1>BloodLine</h1> 
 		<h3>Login</h3> 
-		<form action="/"> 
-			<label for="first"> 
+		<form action="/login" method="POST"> 
+			<label for="email"> 
 				Email: 
 			</label> 
 			<input type="email"
-				id="first"
-				name="first"
+				id="email"
+				name="email"
 				placeholder="Enter your Email" required> 
 
 			<label for="password"> 
@@ -29,10 +29,7 @@
 				placeholder="Enter your Password" required> 
 
 			<div class="wrap"> 
-				<button type="submit"
-						onclick="location.href='/login'"> 
-					Submit 
-				</button> 
+				<button type="submit"> Submit </button> 
 			</div> 
 		</form> 
 		<p>Not registered? 

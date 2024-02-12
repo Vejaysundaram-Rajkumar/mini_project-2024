@@ -89,10 +89,37 @@ def getstarted():
     return render_template("getstarted.html")
 
 #login page
-@app.route('/login')
+@app.route('/login', methods=['POST', 'GET'])
 def login():
-    return render_template("login.html")
+    try:
+        if 'username' in session:
+            # If user is already logged in, redirect to index
+            return redirect(url_for('index'))
+        
+        if request.method == 'POST':
+            email = request.form.get('email')
+            password = request.form.get('password')
 
+            con = connect_db()
+            cursor = con.cursor()
+
+            # Check if the email and password match
+            cursor.execute('SELECT name FROM userdetails WHERE email = ? AND password = ?', (email, password))
+            user = cursor.fetchone()
+
+            if user:
+                # If credentials match, set the username in the session
+                session['username'] = user[0]
+                con.close()
+                return render_template("index.html", current_user=user[0])
+
+            con.close()
+            # If credentials don't match, you can render an error message or redirect to the login page
+            return render_template("error.html", error_message="Invalid email or password.")
+
+        return render_template("login.html")
+    except:
+        return render_template("error.html", error_message="Unexpected error while logging in",error_title="Login error!")
 # Logout route
 @app.route('/logout')
 def logout():
