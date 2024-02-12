@@ -27,6 +27,17 @@ def index():
     except:
         return render_template("error.html",error_title="Rendering Error!", error_message="Network or some internal error occurred while rendering the page.")
 
+#User Profile Page
+@app.route('/profile')
+def profile():
+    try:
+        if 'username' in session:
+            return render_template("profile.html")
+        else:
+            return render_template("error.html",error_title="Not Logged In!", error_message="Profile page can be accessed only after login.")
+    except:
+        return render_template("error.html",error_title="Rendering Error!", error_message="Network or some internal error occurred while rendering the page.")
+
 
 #signup route
 @app.route('/signup', methods=['POST', 'GET'])
@@ -103,20 +114,25 @@ def login():
             con = connect_db()
             cursor = con.cursor()
 
-            # Check if the email and password match
-            cursor.execute('SELECT name FROM userdetails WHERE email = ? AND password = ?', (email, password))
-            user = cursor.fetchone()
+            # Check if the email is registered
+            cursor.execute('SELECT name FROM userdetails WHERE email = ?', (email,))
+            registered_user = cursor.fetchone()
 
-            if user:
-                # If credentials match, set the username in the session
-                session['username'] = user[0]
+            if registered_user:
+                # Check if the email and password match
+                cursor.execute('SELECT name FROM userdetails WHERE email = ? AND password = ?', (email, password))
+                user = cursor.fetchone()
+
+                if user:
+                    # If credentials match, set the username in the session
+                    session['username'] = user[0]
+                    con.close()
+                    return render_template("index.html", current_user=user[0])
+
                 con.close()
-                return render_template("index.html", current_user=user[0])
-
-            con.close()
-            # If credentials don't match, you can render an error message or redirect to the login page
-            return render_template("error.html", error_message="Invalid email or password.")
-
+                # If credentials don't match, you can render an error message or redirect to the login page
+                return render_template("error.html", error_message="Invalid email or password.")
+            return render_template("error.html", error_message="Email is not registered!")
         return render_template("login.html")
     except:
         return render_template("error.html", error_message="Unexpected error while logging in",error_title="Login error!")
