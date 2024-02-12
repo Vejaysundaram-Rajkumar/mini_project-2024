@@ -4,17 +4,15 @@ body {
     font-family: 'Arial', sans-serif;
     margin: 0;
     padding: 0;
-    overflow: hidden; /* Prevent scrolling for the animation effect */
+    overflow: hidden; 
 }
 .profile-dropdown {
     display: inline-block;
     right:0;
     position: absolute;
-    top: 5px; /* Adjust the top spacing as needed */
-    right: 5px; /* Adjust the right spacing as needed */
-    cursor: pointer;
-    
-    
+    top: 5px; 
+    right: 5px; 
+    cursor: pointer;   
 }
 
 .profile-dropdown-content {

@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(to right, #1c81c4, #ed2b15);
+        }
+        #chooseFileLabel{
+            cursor: pointer;
+            background-color:lightblue;
+            color:black;
+            font-weight: bold;
+            width:fit-content;
+            border-radius: 15px;
+        }
+        .profile-container {
+            background-color: #f4f4f4;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            height: fit-content;
+            width: 80%;
+            margin: auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+        }
+
+        .form-row {
+            display: flex;
+
+            margin-bottom: 15px;
+        }
+
+        .form-row label,
+        .form-row input {
+            width: 40%;
+            height:100%; /* Adjust the width as needed */
+        }
+
+        .profile-header {
+            background-color: #f4f4f4;
+            color: #000000;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .profile-picture {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            overflow: hidden;
+            margin: 0 auto 20px;
+        }
+
+        .profile-picture img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .verification {
+            margin-top: 10px;
+        }
+
+        .verified {
+            color: green;
+        }
+
+        .not-verified {
+            color: red;
+        }
+
+        .edit-btn, .save-btn {
+            padding: 10px;
+            margin-top: 10px;
+            cursor: pointer;
+            border: none;
+            border-radius: 4px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .edit-btn {
+            background-color: #4caf50;
+            color: #fff;
+        }
+
+        .save-btn {
+            background-color: #007bff;
+            color: #fff;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <body>
+        <div class="profile-container">
+            <div class="profile-header">
+                <div class="profile-picture">
+                    <img id="profileImage" src="https://via.placeholder.com/100" alt="Profile Picture">
+                </div>
+                <h2>User Profile</h2>
+            </div>
+    
+            <form id="profileForm">
+                <div class="form-row">
+                    <label for="name">Name:</label>
+                    <input type="text" id="name" name="name" disabled>
+                </div>
+    
+                <div class="form-row">
+                    <label for="phoneNumber">Phone Number:</label>
+                    <input type="tel" id="phoneNumber" name="phoneNumber" disabled>
+                </div>
+    
+                <div class="form-row">
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" name="email" disabled>
+                </div>
+    
+                <div class="form-row">
+                    <label for="dob">Date of Birth:</label>
+                    <input type="date" id="dob" name="dob" disabled>
+                </div>
+    
+                <div class="form-row">
+                    <label for="bloodGroup">Blood Group:</label>
+                    <input type="text" id="bloodGroup" name="bloodGroup" disabled>
+                </div>
+    
+                <div class="form-row">
+                    <label>Profile Picture:</label>
+                    <label for="profileImageUpload" id="chooseFileLabel">Change Picture
+                        <input type="file" id="profileImageUpload" name="profileImageUpload" accept="image/*" style="display: none;" disabled>
+                    </label>
+                </div>
+    
+                <div class="verification">
+                    <label>Email Verification:</label>
+                    <span id="emailVerification" class="not-verified">Not Verified</span>
+                </div>
+    
+                <div class="verification">
+                    <label>Blood Group Verification:</label>
+                    <span id="bloodGroupVerification" class="not-verified">Not Verified</span>
+                </div>
+    
+                <button type="button" id="editBtn" class="edit-btn">Edit</button>
+                <button type="button" id="saveBtn" class="save-btn">Save</button>
+            </form>
+        </div>
+
+    <script>
+        // Simulating session data
+        const sessionData = {
+            name: "John Doe",
+            phoneNumber: "123-456-7890",
+            email: "john.doe@example.com",
+            dob: "1990-01-01",
+            bloodGroup: "A+",
+            emailVerified: false,
+            bloodGroupVerified: false,
+        };
+
+        // Function to populate the form with session data
+        function populateForm() {
+            document.getElementById("name").value = sessionData.name;
+            document.getElementById("phoneNumber").value = sessionData.phoneNumber;
+            document.getElementById("email").value = sessionData.email;
+            document.getElementById("dob").value = sessionData.dob;
+            document.getElementById("bloodGroup").value = sessionData.bloodGroup;
+
+            document.getElementById("emailVerification").textContent = sessionData.emailVerified ? "Verified" : "Not Verified";
+            document.getElementById("emailVerification").classList.toggle("verified", sessionData.emailVerified);
+            document.getElementById("emailVerification").classList.toggle("not-verified", !sessionData.emailVerified);
+
+            document.getElementById("bloodGroupVerification").textContent = sessionData.bloodGroupVerified ? "Verified" : "Not Verified";
+            document.getElementById("bloodGroupVerification").classList.toggle("verified", sessionData.bloodGroupVerified);
+            document.getElementById("bloodGroupVerification").classList.toggle("not-verified", !sessionData.bloodGroupVerified);
+        }
+
+        // Function to enable editing of the form
+        function enableEditing() {
+            const formInputs = document.querySelectorAll("#profileForm input");
+            formInputs.forEach(input => {
+                input.removeAttribute("disabled");
+            });
+
+            document.getElementById("emailVerification").textContent = "Not Verified";
+            document.getElementById("emailVerification").classList.remove("verified");
+            document.getElementById("emailVerification").classList.add("not-verified");
+
+            document.getElementById("bloodGroupVerification").textContent = "Not Verified";
+            document.getElementById("bloodGroupVerification").classList.remove("verified");
+            document.getElementById("bloodGroupVerification").classList.add("not-verified");
+
+            document.getElementById("editBtn").style.display = "none";
+            document.getElementById("saveBtn").style.display = "inline-block";
+        }
+
+        // Function to save the edited details
+        function saveDetails() {
+            const formInputs = document.querySelectorAll("#profileForm input");
+            formInputs.forEach(input => {
+                input.setAttribute("disabled", true);
+            });
+
+            sessionData.name = document.getElementById("name").value;
+            sessionData.phoneNumber = document.getElementById("phoneNumber").value;
+            sessionData.email = document.getElementById("email").value;
+            sessionData.dob = document.getElementById("dob").value;
+            sessionData.bloodGroup = document.getElementById("bloodGroup").value;
+
+            document.getElementById("emailVerification").textContent = "Not Verified";
+            document.getElementById("emailVerification").classList.remove("verified");
+            document.getElementById("emailVerification").classList.add("not-verified");
+
+            document.getElementById("bloodGroupVerification").textContent = "Not Verified";
+            document.getElementById("bloodGroupVerification").classList.remove("verified");
+            document.getElementById("bloodGroupVerification").classList.add("not-verified");
+
+            document.getElementById("editBtn").style.display = "inline-block";
+            document.getElementById("saveBtn").style.display = "none";
+        }
+        function handleImageUpload(event) {
+            const fileInput = event.target;
+            const profileImage = document.getElementById("profileImage");
+
+            if (fileInput.files.length > 0) {
+                const file = fileInput.files[0];
+                const reader = new FileReader();
+
+                reader.onload = function (e) {
+                    profileImage.src = e.target.result;
+                };
+
+                reader.readAsDataURL(file);
+            } else {
+                // Handle case when no file is selected or the selected file is not an image
+                profileImage.src = "https://via.placeholder.com/100";
+            }
+        }
+
+        // Event listener for file input click
+        document.getElementById("profileImageUpload").addEventListener("change", handleImageUpload);
+    
+        // Event listeners for the Edit and Save buttons
+        document.getElementById("editBtn").addEventListener("click", enableEditing);
+        document.getElementById("saveBtn").addEventListener("click", saveDetails);
+
+        // Populate the form with session data on page load
+        populateForm();
+    </script>
+</body>
+</html>
