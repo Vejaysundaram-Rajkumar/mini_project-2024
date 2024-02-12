@@ -28,17 +28,18 @@ def index():
         return render_template("error.html",error_title="Rendering Error!", error_message="Network or some internal error occurred while rendering the page.")
 
 
-#signin updation
-@app.route('/signupsubmit', methods=['POST', 'GET'])
-def signupsubmit():
+#signup route
+@app.route('/signup', methods=['POST', 'GET'])
+def signup():
     try:
-        if request.method == 'POST' or request.method == 'GET':
+        if request.method == 'POST':
             con=connect_db()
             cursor=con.cursor()
             first_name = request.form.get('fname')
             last_name = request.form.get('lname')
             email = request.form.get('email')
             phone = request.form.get('phone')
+            length=len(phone)
             dob = request.form.get('dd')
             blood_group = request.form.get('bgroup')
             password = request.form.get('pword')
@@ -50,7 +51,9 @@ def signupsubmit():
             if existing_count > 0:
                 # Checking  Email or phone number already exists!
                 return render_template("error.html", error_title="Please use a different one.",error_message="Email or phone number already exists!")
-            
+            if(length!=10):
+                #Checking valid phone number or not
+                return render_template("error.html", error_title="Invalid Number!",error_message="phone number you entered is not an valid number!")
             # Calculate age based on the provided date of birth
             dob_date = datetime.strptime(dob, '%Y-%m-%d')
             today = datetime.now()
@@ -78,15 +81,12 @@ def signupsubmit():
             session['username'] = name
 
             return render_template("index.html", current_user=name)
+        return render_template("getstarted.html")
     except:
         title="Signup Error!@#$"
         message="Error updating the database with your details for signup!."
         return render_template("error.html",error_title=title,error_message=message)
 
-#signin page
-@app.route('/get-started')
-def getstarted():
-    return render_template("getstarted.html")
 
 #login page
 @app.route('/login', methods=['POST', 'GET'])
