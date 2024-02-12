@@ -6,6 +6,41 @@ body {
     padding: 0;
     overflow: hidden; /* Prevent scrolling for the animation effect */
 }
+.profile-dropdown {
+    display: inline-block;
+    right:0;
+    position: absolute;
+    top: 5px; /* Adjust the top spacing as needed */
+    right: 5px; /* Adjust the right spacing as needed */
+    cursor: pointer;
+    
+    
+}
+
+.profile-dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+    right: 0;
+}
+
+.profile-dropdown:hover .profile-dropdown-content {
+    display: block;
+}
+
+.profile-dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+.profile-dropdown-content a:hover {
+    background-color: #f1f1f1;
+}
 .welcome{
     text-align: right;
     padding: 50px 20px;

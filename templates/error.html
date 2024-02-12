@@ -11,7 +11,7 @@
     <div class="error-container">
         <div class="error-title">Oops! {{error_title}}</div>
         <div class="error-message">{{error_message}}</div>
-        <a href="/" class="back-to-home">Back</a>
+        <a href="{{ request.referrer }}" class="back-to-home">Back</a>
     </div>
 
 </body>

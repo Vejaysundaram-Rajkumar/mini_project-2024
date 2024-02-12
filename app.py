@@ -4,6 +4,7 @@ import hashlib
 import locale
 import json
 import random
+from datetime import datetime
 
 #Creating an app usinng flask
 app = Flask(__name__)
@@ -24,25 +25,57 @@ def index():
         else:
             return render_template("index.html")
     except:
-        return render_template("index.html")
+        return render_template("error.html",error_title="Rendering Error!", error_message="Network or some internal error occurred while rendering the page.")
 
 
-#signin page
+#signin updation
 @app.route('/signupsubmit', methods=['POST', 'GET'])
 def signupsubmit():
     try:
         if request.method == 'POST' or request.method == 'GET':
+            con=connect_db()
+            cursor=con.cursor()
             first_name = request.form.get('fname')
             last_name = request.form.get('lname')
             email = request.form.get('email')
             phone = request.form.get('phone')
-            dd = request.form.get('dd')
-            nn = request.form.get('nn')
-            yyyy = request.form.get('yyyy')
+            dob = request.form.get('dd')
             blood_group = request.form.get('bgroup')
             password = request.form.get('pword')
-            name=first_name + " " + last_name
+
+            # Check if email or phone number already exists
+            cursor.execute('SELECT COUNT(*) FROM userdetails WHERE email = ? OR phonenumber = ?', (email, phone))
+            existing_count = cursor.fetchone()[0]
+
+            if existing_count > 0:
+                # Checking  Email or phone number already exists!
+                return render_template("error.html", error_title="Please use a different one.",error_message="Email or phone number already exists!")
             
+            # Calculate age based on the provided date of birth
+            dob_date = datetime.strptime(dob, '%Y-%m-%d')
+            today = datetime.now()
+            age = today.year - dob_date.year - ((today.month, today.day) < (dob_date.month, dob_date.day))
+            print(age)
+            
+            # Check if the age is within the specified range
+            if age < 18 or age >= 65:
+                # Age is not within the allowed range, display an error message
+                return render_template("error.html", error_message="Age must be between 18 and 64 years old.")
+
+            cursor.execute('SELECT COUNT(*) FROM userdetails')  
+            count = cursor.fetchone()[0]
+            count=count+1
+            #formating the user given deatils for eazy storage
+            name=first_name + " " + last_name
+
+            #Updating the user details into the database
+            
+            cursor.execute("INSERT INTO userdetails (id,name,email,phonenumber,bloodgroup,dob,password) VALUES (?, ?, ?, ?, ?, ?, ?)", (count,name,email,phone,blood_group,dob,password))
+            con.commit()
+            con.close()
+
+            # Store username in session
+            session['username'] = name
 
             return render_template("index.html", current_user=name)
     except:
@@ -59,6 +92,12 @@ def getstarted():
 @app.route('/login')
 def login():
     return render_template("login.html")
+
+# Logout route
+@app.route('/logout')
+def logout():
+    session.pop('username', None)
+    return redirect(url_for('index'))
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0")
