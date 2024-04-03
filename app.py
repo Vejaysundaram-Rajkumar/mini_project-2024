@@ -120,5 +120,17 @@ def logout():
 def login():
     return render_template("login.html")
 
+@app.route('/reset_password', methods=['GET', 'POST'])
+def reset_password():
+    if request.method == 'POST':
+        email = request.form['email']
+        try:
+            auth.send_password_reset_email(email)
+            return render_template("reset_password_success.html")
+        except Exception as e:
+            return render_template("error.html", error_title="Password Reset Error", error_message=str(e))
+    return render_template("reset_password.html")
+
+
 if __name__ == '__main__':
     app.run(host="0.0.0.0")
