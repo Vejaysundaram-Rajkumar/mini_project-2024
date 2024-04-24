@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, session, url_for
+from flask import Flask,jsonify, render_template, request, redirect, session, url_for
 import sqlite3
 import hashlib
 import locale
@@ -21,7 +21,7 @@ def index():
     try:
         if 'username' in session:
             username = session['username']
-            return render_template("index.html", current_user=username)
+            return render_template("dashboard.html", current_user=username)
         else:
             return render_template("index.html")
     except:
@@ -91,7 +91,7 @@ def signup():
             # Store username in session
             session['username'] = name
 
-            return render_template("index.html", current_user=name)
+            return render_template("dashboard.html", current_user=name)
         return render_template("getstarted.html")
     except:
         title="Signup Error!@#$"
@@ -127,7 +127,7 @@ def login():
                     # If credentials match, set the username in the session
                     session['username'] = user[0]
                     con.close()
-                    return render_template("index.html", current_user=user[0])
+                    return render_template("dashboard.html", current_user=user[0])
 
                 con.close()
                 # If credentials don't match, you can render an error message or redirect to the login page
@@ -142,5 +142,27 @@ def logout():
     session.pop('username', None)
     return redirect(url_for('index'))
 
+@app.route('/request_blood', methods=['POST'])
+def request_blood():
+    # Get requestor's location from the request
+    requestor_location = request.json.get('location')
+    print(requestor_location)
+    # Implement your matching algorithm to find nearby users
+    nearby_users = find_nearby_users(requestor_location)
+
+    # Notify nearby users about the blood request
+    notify_nearby_users(nearby_users)
+
+    return jsonify({'message': 'Blood request sent successfully'})
+
+# Function to find nearby users based on location
+def find_nearby_users(requestor_location):
+    # Implement your algorithm to find nearby users
+    pass
+
+# Function to notify nearby users about the blood request
+def notify_nearby_users(nearby_users):
+    # Implement your notification logic
+    pass
 if __name__ == '__main__':
     app.run(host="0.0.0.0")

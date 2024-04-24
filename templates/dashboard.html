@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='dash.css') }}">
+    <title>Bloodline</title>
+</head>
+<body>
+    
+    <div class="gradient-background">
+    <div class="profile-dropdown">
+        <img src="{{ url_for('static', filename='profile_icon.png') }}" alt="Profile Icon" width="30" height="30">
+        <div class="profile-dropdown-content">
+            <a href="/profile">Profile</a>
+            <a href="/logout">Logout</a>
+        </div>
+    </div>
+    <h1 class="welcome">Welcome! {{current_user}}</h1>
+<div class="get-started">
+    <button onclick="location.href='/create'">Create a camp</button>
+    <button  id="requestBloodBtn">Request Blood</button>
+</div>
+<script>
+    // JavaScript to handle blood request button click
+    document.getElementById('requestBloodBtn').addEventListener('click', function() {
+        // Get user's current location using Geolocation API
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(sendBloodRequest);
+        } else {
+            alert('Geolocation is not supported by this browser.');
+        }
+    });
+
+    // Function to send blood request with user's location to the server
+    function sendBloodRequest(position) {
+        const location = {
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude
+        };
+
+        fetch('/request_blood', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ location: location })
+        })
+        .then(response => response.json())
+        .then(data => {
+            alert(data.message);
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    }
+</script>
+
+
+</body>
+</html>
