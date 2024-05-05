@@ -1,0 +1,6 @@
+acc_sid='AC7240413775b8e1ac124becff4b8f7b86'
+auth_token='043e7440a52031f8b3b268812638934f'
+
+twilio_no='+13343848558'
+
+my_no='+917824874629'
