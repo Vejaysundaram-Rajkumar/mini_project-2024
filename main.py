@@ -1,17 +1,19 @@
 from twilio.rest import Client
 import keys
 
-def request(my_no):
+def request_sms(my_no,ms):
     client=Client(keys.acc_sid,keys.auth_token)
     message=client.messages.create(
-        body="Testing the message sending for my mini project and will be calling for intimation",
+        body=ms,
         from_=keys.twilio_no,
         to=my_no
     )
     print(message.body)
 
+def request_call(my_no,message):
+    client=Client(keys.acc_sid,keys.auth_token)
     call=client.calls.create(
-        twiml='<Responce><Say>Hello this is an blood request alert from bloodline community</Say></Responce>',
+        twiml='<Responce><Say>'+message+' This is an request alert!</Say></Responce>',
         to=my_no,
         from_=keys.twilio_no
     )

@@ -158,16 +158,14 @@ def request_blood():
     con.close()  # Close the connection
     filtered_details = [detail for i, detail in enumerate(person_details) if i not in [0,5,6, 7,8]]
     google_maps_link = generate_google_maps_link(requestor_location['latitude'], requestor_location['longitude'])
-    message_1="Blood request from "+ filtered_details[0]+" for " + blood_type + "tive blood type"
+    message_1="Blood request from "+ filtered_details[0]+" for " + blood_type + "tive blood type.\n"
     ph=str(filtered_details[2])
-    message_2="Details of the Requestor : \n" +" Phone number: " + ph + " \nlocation: " + google_maps_link
-    
-    print(message_1,message_2)
+    message_2=message_1+"\nDetails of the Requestor : \n" +"name: " + filtered_details[0] +"\nPhone number: " + ph + " \nlocation: " + google_maps_link
 
     # Implement your matching algorithm to find nearby users
     other_users_no = find_other_users(filtered_details[1])
     # Notify nearby users about the blood request
-    notify_nearby_users()
+    notify_nearby_users(message_2,other_users_no)
     return jsonify({'message': 'Blood request sent successfully'})
 
 
@@ -187,8 +185,10 @@ def find_other_users(email):
     return other_users_phone_numbers
 
 # Function to notify nearby users about the blood request
-def notify_nearby_users():
-    # Implement your notification logic
-    pass
+def notify_nearby_users(message_2,ph):
+    for i in ph:
+        i="+91"+str(i)
+        # main.request_sms(i,message_2)
+        # main.request_call(i,message_2)
 if __name__ == '__main__':
     app.run(host="0.0.0.0")
