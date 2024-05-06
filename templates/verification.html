@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='verify.css') }}">
+    <title>Bloodline</title>
+</head>
+<body>
+    <div class="container">
+        <h1>Email Verification</h1>
+        <div class="card">
+            <p>An OTP has been sent to your mail. Please enter the OTP below:</p>
+            <form action="/verify" id="verificationForm" method="POST">
+                <label for="otp">Enter OTP:</label>
+                <input type="text" id="otp" name="otp" required><br><br>
+                <input type="submit" value="Verify">
+            </form>
+        </div>
+    </div>
+    <div id="alert" style="display: none;">
+        
+    </div>
+
+
+    <script>
+        document.getElementById('verificationForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent the form from submitting normally
+            var otp = document.getElementById('otp').value;
+        fetch('/verify', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ otp: otp})
+    })
+    .then(response => response.json())
+    .then(data => {
+        alert("Email-verification sucessfull");
+        window.location.href = '/';
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+});
+
+    </script>
+</body>
+</html>

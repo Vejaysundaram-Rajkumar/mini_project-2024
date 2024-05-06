@@ -6,7 +6,8 @@ import json
 import random
 from datetime import datetime
 import main
-
+import smtplib
+from email.mime.text import MIMEText
 #Creating an app usinng flask
 app = Flask(__name__)
 app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
@@ -15,12 +16,142 @@ app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
 def connect_db():
     connection = sqlite3.connect('userdatabase.db')
     return connection
+# Function to generate OTP
+def generate_otp():
+    return str(random.randint(100000, 999999))
+
+# Function to send OTP via email
+def send_email(email, otp):
+    sender_email = "bloodline.at.2024@gmail.com"  # Enter your email
+    sender_password = "loxqrxxrrlnlufqy"       # Enter your password
+
+    message = MIMEText(f"Your OTP for email verification is: {otp}")
+
+    message['Subject'] = 'Email Verification OTP'
+    message['From'] = sender_email
+    message['To'] = email
+
+    server = smtplib.SMTP('smtp.gmail.com', 587)
+    server.starttls()
+    server.login(sender_email, sender_password)
+    server.sendmail(sender_email, [email], message.as_string())
+    server.quit()
+
+#signup route
+@app.route('/signup', methods=['POST', 'GET'])
+def signup():
+    try:
+        if request.method == 'POST':
+            con = connect_db()
+            cursor = con.cursor()
+            first_name = request.form.get('fname')
+            last_name = request.form.get('lname')
+            email = request.form.get('email')
+            phone = request.form.get('phone')
+            length = len(phone)
+            dob = request.form.get('dd')
+            blood_group = request.form.get('bgroup')
+            password = request.form.get('pword')
+
+            # Check if email or phone number already exists
+            cursor.execute('SELECT COUNT(*) FROM userdetails WHERE email = ? OR phonenumber = ?', (email, phone))
+            existing_count = cursor.fetchone()[0]
+
+            if existing_count > 0:
+                # Checking Email or phone number already exists!
+                return render_template("error.html", error_title="Please use a different one.",
+                                       error_message="Email or phone number already exists!")
+            if length != 10:
+                # Checking valid phone number or not
+                return render_template("error.html", error_title="Invalid Number!",
+                                       error_message="phone number you entered is not an valid number!")
+
+            # Calculate age based on the provided date of birth
+            dob_date = datetime.strptime(dob, '%Y-%m-%d')
+            today = datetime.now()
+            age = today.year - dob_date.year - ((today.month, today.day) < (dob_date.month, dob_date.day))
+
+            # Check if the age is within the specified range
+            if age < 18 or age >= 65:
+                # Age is not within the allowed range, display an error message
+                return render_template("error.html", error_message="Age must be between 18 and 64 years old.")
+
+            cursor.execute('SELECT COUNT(*) FROM userdetails')
+            count = cursor.fetchone()[0]
+            count = count + 1
+            # formating the user given deatils for eazy storage
+            name = first_name + " " + last_name
+
+            # Store user details in session
+            session['user_details'] = {
+                'name': name,
+                'email': email,
+                'phone': phone,
+                'dob': dob,
+                'blood_group': blood_group,
+                'password': password
+            }
+
+            # Generate OTP and store in session
+            otp = generate_otp()
+            session['otp'] = otp
+
+            # Send OTP via email
+            send_email(email, otp)
+
+            # Redirect to email verification page
+            return render_template("verification.html")
+
+        return render_template("getstarted.html")
+    except Exception as e:
+        # Handle exceptions
+        return render_template("error.html", error_title="Signup Error!", error_message=str(e))
+
+# Email verification route
+@app.route('/verify', methods=['GET', 'POST'])
+def verify_email():
+    try:
+        if request.method == 'POST':
+            otp_entered = request.json.get('otp')
+            if otp_entered == session.get('otp'):
+                # Account verified, proceed with account creation
+                user_details = session.get('user_details')
+                name = user_details['name']
+                email = user_details['email']
+                phone = user_details['phone']
+                dob = user_details['dob']
+                blood_group = user_details['blood_group']
+                password = user_details['password']
+
+                con = connect_db()
+                cursor = con.cursor()
+                cursor.execute('SELECT COUNT(*) FROM userdetails')  
+                count = cursor.fetchone()[0]
+                count=count+1
+                # Updating the user details into the database
+                cursor.execute(
+                    "INSERT INTO userdetails (id,name,email,phonenumber,bloodgroup,dob,password,email_verify) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+                    (count, name, email, phone, blood_group, dob, password ,1))
+                con.commit()
+                con.close()
+
+                # Clear session variables after successful signup
+                session.pop('user_details')
+                session.pop('otp')
+                # Redirect to dashboard or any other success page
+                return jsonify({'success': True})
+            else:
+                # Incorrect OTP entered
+                return jsonify({'success': False})
+    except Exception as e:
+        # Handle exceptions
+        return render_template("error.html", error_title="Verification Error!", error_message=str(e))
 
 #rendering the landing or the home page
 @app.route('/')
 def index():
     try:
-        if 'username' in session:
+        if 'username' in session :
             username = session['username']
             return render_template("dashboard.html", current_user=username)
         else:
@@ -39,65 +170,6 @@ def profile():
     except:
         return render_template("error.html",error_title="Rendering Error!", error_message="Network or some internal error occurred while rendering the page.")
 
-
-#signup route
-@app.route('/signup', methods=['POST', 'GET'])
-def signup():
-    try:
-        if request.method == 'POST':
-            con=connect_db()
-            cursor=con.cursor()
-            first_name = request.form.get('fname')
-            last_name = request.form.get('lname')
-            email = request.form.get('email')
-            phone = request.form.get('phone')
-            length=len(phone)
-            dob = request.form.get('dd')
-            blood_group = request.form.get('bgroup')
-            password = request.form.get('pword')
-
-            # Check if email or phone number already exists
-            cursor.execute('SELECT COUNT(*) FROM userdetails WHERE email = ? OR phonenumber = ?', (email, phone))
-            existing_count = cursor.fetchone()[0]
-
-            if existing_count > 0:
-                # Checking  Email or phone number already exists!
-                return render_template("error.html", error_title="Please use a different one.",error_message="Email or phone number already exists!")
-            if(length!=10):
-                #Checking valid phone number or not
-                return render_template("error.html", error_title="Invalid Number!",error_message="phone number you entered is not an valid number!")
-            # Calculate age based on the provided date of birth
-            dob_date = datetime.strptime(dob, '%Y-%m-%d')
-            today = datetime.now()
-            age = today.year - dob_date.year - ((today.month, today.day) < (dob_date.month, dob_date.day))
-            print(age)
-            
-            # Check if the age is within the specified range
-            if age < 18 or age >= 65:
-                # Age is not within the allowed range, display an error message
-                return render_template("error.html", error_message="Age must be between 18 and 64 years old.")
-
-            cursor.execute('SELECT COUNT(*) FROM userdetails')  
-            count = cursor.fetchone()[0]
-            count=count+1
-            #formating the user given deatils for eazy storage
-            name=first_name + " " + last_name
-
-            #Updating the user details into the database
-            
-            cursor.execute("INSERT INTO userdetails (id,name,email,phonenumber,bloodgroup,dob,password) VALUES (?, ?, ?, ?, ?, ?, ?)", (count,name,email,phone,blood_group,dob,password))
-            con.commit()
-            con.close()
-
-            # Store username in session
-            session['username'] = name
-
-            return render_template("dashboard.html", current_user=name)
-        return render_template("getstarted.html")
-    except:
-        title="Signup Error!@#$"
-        message="Error updating the database with your details for signup!."
-        return render_template("error.html",error_title=title,error_message=message)
 
 
 #login page
