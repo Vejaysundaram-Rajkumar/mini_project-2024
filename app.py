@@ -147,10 +147,8 @@ def logout():
 def request_blood():
     # Get requestor's location from the request
     requestor_location = request.json.get('location')
-    print(requestor_location)
     name = session['username']
     blood_type = request.json.get('bloodType')  # Get the selected blood type
-    print(f"Blood Type Requested: {blood_type}")
     con = connect_db()
     cursor = con.cursor()
     u1 = "SELECT * FROM userdetails WHERE name = ?"  # Replace 'table_name' with your actual table name
@@ -159,23 +157,37 @@ def request_blood():
     person_details = cursor.fetchone()  # Fetch one row containing all details
     con.close()  # Close the connection
     filtered_details = [detail for i, detail in enumerate(person_details) if i not in [0,5,6, 7,8]]
-    for p in filtered_details:
-        print(p)
+    google_maps_link = generate_google_maps_link(requestor_location['latitude'], requestor_location['longitude'])
+    message_1="Blood request from "+ filtered_details[0]+" for " + blood_type + "tive blood type"
+    ph=str(filtered_details[2])
+    message_2="Details of the Requestor : \n" +" Phone number: " + ph + " \nlocation: " + google_maps_link
+    
+    print(message_1,message_2)
+
     # Implement your matching algorithm to find nearby users
-    nearby_users = find_nearby_users(requestor_location)
-
+    other_users_no = find_other_users(filtered_details[1])
     # Notify nearby users about the blood request
-    notify_nearby_users(nearby_users)
-
+    notify_nearby_users()
     return jsonify({'message': 'Blood request sent successfully'})
 
+
+def generate_google_maps_link(latitude, longitude):
+    return f"https://www.google.com/maps/search/?api=1&query={latitude},{longitude}"
+
+
 # Function to find nearby users based on location
-def find_nearby_users(requestor_location):
-    # Implement your algorithm to find nearby users
-    pass
+def find_other_users(email):
+    con = connect_db()
+    cursor = con.cursor()
+    cursor.execute("SELECT phonenumber FROM userdetails WHERE email != ?", (email,))
+    phone_numbers = cursor.fetchall()
+    con.close()
+    # Extract phone numbers from the result set
+    other_users_phone_numbers = [phone_number[0] for phone_number in phone_numbers]
+    return other_users_phone_numbers
 
 # Function to notify nearby users about the blood request
-def notify_nearby_users(nearby_users):
+def notify_nearby_users():
     # Implement your notification logic
     pass
 if __name__ == '__main__':
