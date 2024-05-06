@@ -16,45 +16,95 @@
             <a href="/logout">Logout</a>
         </div>
     </div>
+    <div id="requestBloodModal" class="modal">
+
+        <!-- Modal content -->
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <form id="bloodRequestForm">
+                <label for="bloodType">Select Blood Type:</label>
+                <select id="bloodType" name="bloodType">
+                    <option value="A+">A+</option>
+                    <option value="A-">A-</option>
+                    <option value="B+">B+</option>
+                    <option value="B-">B-</option>
+                    <!-- Add other blood types here -->
+                </select>
+                <button type="submit">Submit</button>
+            </form>
+        </div>
+
+    </div>
     <h1 class="welcome">Welcome! {{current_user}}</h1>
 <div class="get-started">
     <button onclick="location.href='/create'">Create a camp</button>
     <button  id="requestBloodBtn">Request Blood</button>
 </div>
 <script>
-    // JavaScript to handle blood request button click
-    document.getElementById('requestBloodBtn').addEventListener('click', function() {
-        // Get user's current location using Geolocation API
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(sendBloodRequest);
-        } else {
-            alert('Geolocation is not supported by this browser.');
-        }
-    });
+    // Get the modal
+    var modal = document.getElementById("requestBloodModal");
 
-    // Function to send blood request with user's location to the server
-    function sendBloodRequest(position) {
-        const location = {
-            latitude: position.coords.latitude,
-            longitude: position.coords.longitude
-        };
+    // Get the button that opens the modal
+    var btn = document.getElementById("requestBloodBtn");
 
-        fetch('/request_blood', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ location: location })
-        })
-        .then(response => response.json())
-        .then(data => {
-            alert(data.message);
-        })
-        .catch(error => {
-            console.error('Error:', error);
-        });
+    // Get the <span> element that closes the modal
+    var span = document.getElementsByClassName("close")[0];
+
+    // When the user clicks the button, open the modal
+    btn.onclick = function() {
+        modal.style.display = "block";
     }
+
+    // When the user clicks on <span> (x), close the modal
+    span.onclick = function() {
+        modal.style.display = "none";
+    }
+
+    // When the user clicks anywhere outside of the modal, close it
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    }
+
+    function sendBloodRequest(position, bloodType) {
+    const location = {
+        latitude: position.coords.latitude,
+        longitude: position.coords.longitude
+    };
+
+    fetch('/request_blood', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ location: location, bloodType: bloodType })
+    })
+    .then(response => response.json())
+    .then(data => {
+        alert(data.message);
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+}
+
+// Handle form submission
+document.getElementById('bloodRequestForm').addEventListener('submit', function(event) {
+    event.preventDefault();
+    var bloodType = document.getElementById('bloodType').value;
+    // Get user's current location using Geolocation API
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function(position) {
+            sendBloodRequest(position, bloodType);
+        });
+    } else {
+        alert('Geolocation is not supported by this browser.');
+    }
+    modal.style.display = "none"; // Close the modal after submission
+});
 </script>
+
 
 
 </body>

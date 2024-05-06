@@ -5,6 +5,7 @@ import locale
 import json
 import random
 from datetime import datetime
+import main
 
 #Creating an app usinng flask
 app = Flask(__name__)
@@ -147,6 +148,19 @@ def request_blood():
     # Get requestor's location from the request
     requestor_location = request.json.get('location')
     print(requestor_location)
+    name = session['username']
+    blood_type = request.json.get('bloodType')  # Get the selected blood type
+    print(f"Blood Type Requested: {blood_type}")
+    con = connect_db()
+    cursor = con.cursor()
+    u1 = "SELECT * FROM userdetails WHERE name = ?"  # Replace 'table_name' with your actual table name
+    va1 = (name,)
+    cursor.execute(u1, va1)
+    person_details = cursor.fetchone()  # Fetch one row containing all details
+    con.close()  # Close the connection
+    filtered_details = [detail for i, detail in enumerate(person_details) if i not in [0,5,6, 7,8]]
+    for p in filtered_details:
+        print(p)
     # Implement your matching algorithm to find nearby users
     nearby_users = find_nearby_users(requestor_location)
 
