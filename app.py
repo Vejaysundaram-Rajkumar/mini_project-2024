@@ -260,6 +260,7 @@ def find_other_users(email):
 def notify_nearby_users(message_2,ph):
     for i in ph:
         i="+91"+str(i)
+        print(message_2,i)
         # main.request_sms(i,message_2)
         # main.request_call(i,message_2)
 if __name__ == '__main__':
