@@ -4,6 +4,7 @@ import hashlib
 import locale
 import json
 import random
+import time
 from datetime import datetime
 import main
 import smtplib
@@ -227,19 +228,31 @@ def request_blood():
     va1 = (name,)
     cursor.execute(u1, va1)
     person_details = cursor.fetchone()  # Fetch one row containing all details
-    con.close()  # Close the connection
+    
     filtered_details = [detail for i, detail in enumerate(person_details) if i not in [0,5,6, 7,8]]
+
     google_maps_link = generate_google_maps_link(requestor_location['latitude'], requestor_location['longitude'])
+    
     message_1="Blood request from "+ filtered_details[0]+" for " + blood_type + "tive blood type.\n"
     ph=str(filtered_details[2])
     message_2=message_1+"\nDetails of the Requestor : \n" +"name: " + filtered_details[0] +"\nPhone number: " + ph + " \nlocation: " + google_maps_link
-
+    if check_recent_request(filtered_details[0]):
+        return jsonify({'message': 'You can make another request after 5 minutes.'}), 403
+    
+    cursor.execute('SELECT COUNT(*) FROM requested_details')
+    count = cursor.fetchone()[0]
+    count = count + 1
+    timestamp = int(time.time())    
+    cursor.execute('''INSERT INTO requested_details (id,requestorname, requestornumber, bloodtype, timestamp)
+                    VALUES (?, ?, ?, ?, ?)''', (count, filtered_details[0], filtered_details[2],blood_type, timestamp))
+    con.commit()
+    con.close()  # Close the connection
     # Implement your matching algorithm to find nearby users
     other_users_no = find_other_users(filtered_details[1])
     # Notify nearby users about the blood request
     notify_nearby_users(message_2,other_users_no)
     return jsonify({'message': 'Blood request sent successfully'})
-
+#requested_details
 
 def generate_google_maps_link(latitude, longitude):
     return f"https://www.google.com/maps/search/?api=1&query={latitude},{longitude}"
@@ -263,5 +276,16 @@ def notify_nearby_users(message_2,ph):
         print(message_2,i)
         # main.request_sms(i,message_2)
         # main.request_call(i,message_2)
+
+# Function to check if a user has made a recent request within the 5-minute window
+def check_recent_request(userName):
+    con = connect_db()
+    cursor = con.cursor()
+    current_time = int(time.time())
+    five_minutes_ago = current_time - (5 * 60)  # 5 minutes in seconds
+    cursor.execute('''SELECT * FROM requested_details WHERE requestorname = ? AND timestamp >= ?''', (userName, five_minutes_ago))
+    row = cursor.fetchone()
+    con.close()
+    return row is not None
 if __name__ == '__main__':
     app.run(host="0.0.0.0")
