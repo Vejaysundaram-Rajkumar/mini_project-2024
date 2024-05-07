@@ -1,171 +1,36 @@
+<!-- profile.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{ url_for('static', filename='profile.css') }}">
+    <!-- Add Font Awesome CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <title>User Profile</title>
 </head>
 <body>
-    <body>
-        <div class="profile-container">
-            <div class="profile-header">
-                <div class="profile-picture">
-                    <img id="profileImage" src="https://via.placeholder.com/100" alt="Profile Picture">
-                </div>
-                <h2>User Profile</h2>
+    <div class="profile-container">
+        <div class="profile-header">
+            <div class="profile-picture">
+                <img id="profileImage" src="{{ url_for('static', filename='profile_icon.png') }}" alt="Profile Picture">
             </div>
-    
-            <form id="profileForm">
-                <div class="form-row">
-                    <label for="name">Name:</label>
-                    <input type="text" id="name" name="name" disabled>
-                </div>
-    
-                <div class="form-row">
-                    <label for="phoneNumber">Phone Number:</label>
-                    <input type="tel" id="phoneNumber" name="phoneNumber" disabled>
-                </div>
-    
-                <div class="form-row">
-                    <label for="email">Email:</label>
-                    <input type="email" id="email" name="email" disabled>
-                </div>
-    
-                <div class="form-row">
-                    <label for="dob">Date of Birth:</label>
-                    <input type="date" id="dob" name="dob" disabled>
-                </div>
-    
-                <div class="form-row">
-                    <label for="bloodGroup">Blood Group:</label>
-                    <input type="text" id="bloodGroup" name="bloodGroup" disabled>
-                </div>
-    
-                <div class="form-row">
-                    <label>Profile Picture:</label>
-                    <label for="profileImageUpload" id="chooseFileLabel">Change Picture
-                        <input type="file" id="profileImageUpload" name="profileImageUpload" accept="image/*" style="display: none;" disabled>
-                    </label>
-                </div>
-    
-                <div class="verification">
-                    <label>Email Verification:</label>
-                    <span id="emailVerification" class="not-verified">Not Verified</span>
-                </div>
-    
-                <div class="verification">
-                    <label>Blood Group Verification:</label>
-                    <span id="bloodGroupVerification" class="not-verified">Not Verified</span>
-                </div>
-    
-                <button type="button" id="editBtn" class="edit-btn">Edit</button>
-                <button type="button" id="saveBtn" class="save-btn">Save</button>
-                <a href="{{ request.referrer }}" class="back-to-home">Back</a>
-            </form>
-            
+            <h2>User Profile</h2>
         </div>
 
-    <script>
-        // Simulating session data
-        const sessionData = {
-            name: "John Doe",
-            phoneNumber: "123-456-7890",
-            email: "john.doe@example.com",
-            dob: "1990-01-01",
-            bloodGroup: "A+",
-            emailVerified: false,
-            bloodGroupVerified: false,
-        };
+        <!-- Display user details -->
+        <div class="profile-details">
+            <p><strong>Name:</strong> {{ user_data[0] }}</p>
+            <p><strong>Email:</strong> {{ user_data[1] }}</p>
+            <p><strong>Phone Number:</strong> {{ user_data[2] }}</p>
+            <p><strong>Blood Group:</strong> {{ user_data[3] }}</p>
+            <p><strong>Date of Birth:</strong> {{ user_data[4] }}</p>
+            <!-- Display verification status icon -->
+            <p><strong>Verification status of mail:</strong> {% if user_data[5] == 'Verified' %} <i class="fas fa-check-circle verified"></i> {% else %} <i class="fas fa-times-circle not-verified"></i> {% endif %}</p>
+        </div>
 
-        // Function to populate the form with session data
-        function populateForm() {
-            document.getElementById("name").value = sessionData.name;
-            document.getElementById("phoneNumber").value = sessionData.phoneNumber;
-            document.getElementById("email").value = sessionData.email;
-            document.getElementById("dob").value = sessionData.dob;
-            document.getElementById("bloodGroup").value = sessionData.bloodGroup;
-
-            document.getElementById("emailVerification").textContent = sessionData.emailVerified ? "Verified" : "Not Verified";
-            document.getElementById("emailVerification").classList.toggle("verified", sessionData.emailVerified);
-            document.getElementById("emailVerification").classList.toggle("not-verified", !sessionData.emailVerified);
-
-            document.getElementById("bloodGroupVerification").textContent = sessionData.bloodGroupVerified ? "Verified" : "Not Verified";
-            document.getElementById("bloodGroupVerification").classList.toggle("verified", sessionData.bloodGroupVerified);
-            document.getElementById("bloodGroupVerification").classList.toggle("not-verified", !sessionData.bloodGroupVerified);
-        }
-
-        // Function to enable editing of the form
-        function enableEditing() {
-            const formInputs = document.querySelectorAll("#profileForm input");
-            formInputs.forEach(input => {
-                input.removeAttribute("disabled");
-            });
-
-            document.getElementById("emailVerification").textContent = "Not Verified";
-            document.getElementById("emailVerification").classList.remove("verified");
-            document.getElementById("emailVerification").classList.add("not-verified");
-
-            document.getElementById("bloodGroupVerification").textContent = "Not Verified";
-            document.getElementById("bloodGroupVerification").classList.remove("verified");
-            document.getElementById("bloodGroupVerification").classList.add("not-verified");
-
-            document.getElementById("editBtn").style.display = "none";
-            document.getElementById("saveBtn").style.display = "inline-block";
-        }
-
-        // Function to save the edited details
-        function saveDetails() {
-            const formInputs = document.querySelectorAll("#profileForm input");
-            formInputs.forEach(input => {
-                input.setAttribute("disabled", true);
-            });
-
-            sessionData.name = document.getElementById("name").value;
-            sessionData.phoneNumber = document.getElementById("phoneNumber").value;
-            sessionData.email = document.getElementById("email").value;
-            sessionData.dob = document.getElementById("dob").value;
-            sessionData.bloodGroup = document.getElementById("bloodGroup").value;
-
-            document.getElementById("emailVerification").textContent = "Not Verified";
-            document.getElementById("emailVerification").classList.remove("verified");
-            document.getElementById("emailVerification").classList.add("not-verified");
-
-            document.getElementById("bloodGroupVerification").textContent = "Not Verified";
-            document.getElementById("bloodGroupVerification").classList.remove("verified");
-            document.getElementById("bloodGroupVerification").classList.add("not-verified");
-
-            document.getElementById("editBtn").style.display = "inline-block";
-            document.getElementById("saveBtn").style.display = "none";
-        }
-        function handleImageUpload(event) {
-            const fileInput = event.target;
-            const profileImage = document.getElementById("profileImage");
-
-            if (fileInput.files.length > 0) {
-                const file = fileInput.files[0];
-                const reader = new FileReader();
-
-                reader.onload = function (e) {
-                    profileImage.src = e.target.result;
-                };
-
-                reader.readAsDataURL(file);
-            } else {
-                // Handle case when no file is selected or the selected file is not an image
-                profileImage.src = "https://via.placeholder.com/100";
-            }
-        }
-
-        // Event listener for file input click
-        document.getElementById("profileImageUpload").addEventListener("change", handleImageUpload);
-    
-        // Event listeners for the Edit and Save buttons
-        document.getElementById("editBtn").addEventListener("click", enableEditing);
-        document.getElementById("saveBtn").addEventListener("click", saveDetails);
-
-        // Populate the form with session data on page load
-        populateForm();
-    </script>
+        <!-- Back button -->
+        <a href="/" class="back-btn">Back</a>
+    </div>
 </body>
 </html>

@@ -160,16 +160,32 @@ def index():
     except:
         return render_template("error.html",error_title="Rendering Error!", error_message="Network or some internal error occurred while rendering the page.")
 
-#User Profile Page
+# Flask Route to Serve Profile Page and Handle Form Submission
 @app.route('/profile')
 def profile():
     try:
         if 'username' in session:
-            return render_template("profile.html")
+            username = session['username']
+            con = connect_db()
+            cursor = con.cursor()
+            
+            cursor.execute('SELECT * FROM userdetails WHERE name = ?', (username,))
+            person_details = cursor.fetchone()  # Fetch one row containing all details
+
+            if person_details:
+                # Filter out unnecessary details (e.g., ID and password)
+                filtered_details = [detail for i, detail in enumerate(person_details) if i not in [0, 6,7]]
+                verification_status = "Verified" if person_details[7] == 1 else "Not Verified"
+                filtered_details.append(verification_status)
+                return render_template('profile.html', user_data=filtered_details)
+            else:
+                return render_template("error.html", error_title="User Not Found", error_message="User details not found.")
         else:
-            return render_template("error.html",error_title="Not Logged In!", error_message="Profile page can be accessed only after login.")
-    except:
-        return render_template("error.html",error_title="Rendering Error!", error_message="Network or some internal error occurred while rendering the page.")
+            return render_template("error.html", error_title="Not Logged In!", error_message="Profile page can be accessed only after login.")
+    except Exception as e:
+        # Log the exception for debugging purposes
+        print(e)
+        return render_template("error.html", error_title="Rendering Error!", error_message="An error occurred while rendering the page.")
 
 
 
@@ -229,7 +245,7 @@ def request_blood():
     cursor.execute(u1, va1)
     person_details = cursor.fetchone()  # Fetch one row containing all details
     
-    filtered_details = [detail for i, detail in enumerate(person_details) if i not in [0,5,6, 7,8]]
+    filtered_details = [detail for i, detail in enumerate(person_details) if i not in [0,5,6, 7]]
 
     google_maps_link = generate_google_maps_link(requestor_location['latitude'], requestor_location['longitude'])
     
